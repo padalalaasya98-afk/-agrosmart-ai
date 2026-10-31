@@ -58,8 +58,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 // Start Server & Connect Database
 async function startServer() {
   await initDatabase();
-  app.listen(PORT, () => {
-    console.log(`🌾 AgroSmart AI Backend listening on http://localhost:${PORT}`);
+  app.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`🌾 AgroSmart AI Backend listening on http://0.0.0.0:${PORT}`);
     console.log(`📡 Health Check: http://localhost:${PORT}/api/health`);
     console.log(`📊 Crops API: http://localhost:${PORT}/api/crops`);
   });

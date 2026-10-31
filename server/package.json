@@ -4,6 +4,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "prebuild": "npm --prefix ../shared run build && prisma generate",
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "tsx --test src/tests/*.test.ts",

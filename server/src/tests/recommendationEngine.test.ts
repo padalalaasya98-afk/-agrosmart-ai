@@ -1,5 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
+import { CropRecommendationResult } from '@agrosmart/shared';
 import { RecommendationEngine } from '../services/recommendationEngine.js';
 import { CROPS_DATASET } from '../data/cropDataset.js';
 import { assessInputQuality, recommendationInputSchema } from '../validators/recommendationValidator.js';
@@ -81,8 +82,8 @@ describe('AgroSmart AI Recommendation Engine & Validation Suite', () => {
     const wetScenario = SAMPLE_SCENARIOS[0].input; // Warm & Humid
     const res = await engine.evaluate(wetScenario);
 
-    const rice = res.recommendations.find(r => r.crop.name === 'Rice');
-    const pearlMillet = res.recommendations.find(r => r.crop.name === 'Pearl Millet');
+    const rice = res.recommendations.find((r: CropRecommendationResult) => r.crop.name === 'Rice');
+    const pearlMillet = res.recommendations.find((r: CropRecommendationResult) => r.crop.name === 'Pearl Millet');
 
     assert.ok(rice, 'Rice must be evaluated');
     assert.ok(pearlMillet, 'Pearl Millet must be evaluated');
@@ -96,8 +97,8 @@ describe('AgroSmart AI Recommendation Engine & Validation Suite', () => {
     const coolScenario = SAMPLE_SCENARIOS[1].input; // Cool Season
     const res = await engine.evaluate(coolScenario);
 
-    const wheat = res.recommendations.find(r => r.crop.name === 'Wheat');
-    const cotton = res.recommendations.find(r => r.crop.name === 'Cotton');
+    const wheat = res.recommendations.find((r: CropRecommendationResult) => r.crop.name === 'Wheat');
+    const cotton = res.recommendations.find((r: CropRecommendationResult) => r.crop.name === 'Cotton');
 
     assert.ok(wheat, 'Wheat must be evaluated');
     assert.ok(cotton, 'Cotton must be evaluated');

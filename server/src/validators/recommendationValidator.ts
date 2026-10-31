@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RecommendationInput } from '@agrosmart/shared';
 
 export const recommendationInputSchema = z.object({
   soilType: z.enum(['Sandy', 'Clay', 'Loamy', 'Silty', 'Black', 'Red', 'Alluvial', 'Unknown']).nullable().optional(),
@@ -50,11 +51,11 @@ export interface InputQualityAssessment {
   tips: string[];
 }
 
-export function assessInputQuality(data: any): InputQualityAssessment {
+export function assessInputQuality(data: Partial<RecommendationInput>): InputQualityAssessment {
   const warnings: string[] = [];
   const tips: string[] = [];
   let presentCount = 0;
-  const criticalFields = ['soilType', 'soilPh', 'temperature', 'rainfall', 'nitrogen', 'phosphorus', 'potassium', 'season'];
+  const criticalFields: (keyof RecommendationInput)[] = ['soilType', 'soilPh', 'temperature', 'rainfall', 'nitrogen', 'phosphorus', 'potassium', 'season'];
 
   // Check NPK
   const n = data.nitrogen != null ? Number(data.nitrogen) : null;

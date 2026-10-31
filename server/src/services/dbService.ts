@@ -1,5 +1,13 @@
 import { PrismaClient } from '@prisma/client';
-import { CropProfile, RecommendationInput, RecommendationResponse } from '@agrosmart/shared';
+import {
+  CropProfile,
+  GrowingSeason,
+  RecommendationInput,
+  RecommendationResponse,
+  SoilType,
+  WaterAvailability,
+  WaterRequirement
+} from '@agrosmart/shared';
 import { CROPS_DATASET } from '../data/cropDataset.js';
 
 let prisma: PrismaClient | null = null;
@@ -31,7 +39,7 @@ interface StoredRecord {
   userId?: string | null;
   createdAt: string;
   input: RecommendationInput;
-  results: RecommendationResponse;
+  results: RecommendationResponse | null;
 }
 
 const memoryStore: StoredRecord[] = [];
@@ -48,10 +56,10 @@ export const dbService = {
             id: c.id,
             name: c.name,
             scientificName: c.scientificName || '',
-            category: c.category as any,
+            category: c.category as CropProfile['category'],
             description: c.description,
             imageUrl: c.imageUrl,
-            suitableSoilTypes: c.soilTypes as any,
+            suitableSoilTypes: c.soilTypes as SoilType[],
             minPh: c.minPh,
             maxPh: c.maxPh,
             optimalPhMin: c.optimalPhMin,
@@ -68,8 +76,8 @@ export const dbService = {
             maxHumidity: c.maxHumidity,
             optimalHumidityMin: c.optimalHumidityMin,
             optimalHumidityMax: c.optimalHumidityMax,
-            seasons: c.seasons as any,
-            waterRequirement: c.waterRequirement as any,
+            seasons: c.seasons as GrowingSeason[],
+            waterRequirement: c.waterRequirement as WaterRequirement,
             npkRequirement: JSON.parse(c.npkRequirementJson || '{}'),
             growingDurationDays: { min: 90, max: 130 },
             majorAdvantages: c.majorAdvantages,
@@ -158,7 +166,7 @@ export const dbService = {
             userId: req.userId,
             createdAt: req.createdAt.toISOString(),
             input: {
-              soilType: req.soilType as any,
+              soilType: req.soilType as SoilType,
               soilPh: req.soilPh,
               nitrogen: req.nitrogen,
               phosphorus: req.phosphorus,
@@ -166,13 +174,13 @@ export const dbService = {
               temperature: req.temperature,
               rainfall: req.rainfall,
               humidity: req.humidity,
-              season: req.season as any,
+              season: req.season as GrowingSeason,
               state: req.state,
               district: req.district,
               irrigationAvailable: req.irrigationAvailable,
-              waterAvailability: req.waterAvailability as any
+              waterAvailability: req.waterAvailability as WaterAvailability
             },
-            results: null as any
+            results: null
           };
         }
       } catch (err) {

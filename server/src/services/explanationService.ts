@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { CropRecommendationResult, RecommendationInput } from '@agrosmart/shared';
+import { CropRecommendationResult, FactorScore, RecommendationInput } from '@agrosmart/shared';
 
 let geminiClient: GoogleGenerativeAI | null = null;
 if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim() !== '') {
@@ -22,7 +22,7 @@ export async function generateExplanation(
   const missingInputs: string[] = [];
 
   // Inspect factor scores
-  for (const [key, f] of Object.entries(res.factorScores)) {
+  for (const f of Object.values(res.factorScores) as FactorScore[]) {
     if (f.status === 'optimal') {
       positiveFactors.push(`${f.factor}: ${f.detail}`);
     } else if (f.status === 'moderate') {

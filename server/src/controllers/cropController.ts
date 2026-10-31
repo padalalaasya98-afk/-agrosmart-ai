@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { dbService } from '../services/dbService.js';
-import { CropComparisonResponse, CropProfile } from '@agrosmart/shared';
+import { CropComparisonResponse, CropProfile, GrowingSeason } from '@agrosmart/shared';
 
 export const cropController = {
   // GET /api/crops
@@ -14,7 +14,7 @@ export const cropController = {
       }
 
       if (season && typeof season === 'string') {
-        crops = crops.filter(c => c.seasons.includes(season as any) || c.seasons.includes('All Season'));
+        crops = crops.filter(c => c.seasons.includes(season as GrowingSeason) || c.seasons.includes('All Season'));
       }
 
       if (search && typeof search === 'string') {
@@ -23,7 +23,7 @@ export const cropController = {
           c.name.toLowerCase().includes(query) ||
           c.scientificName.toLowerCase().includes(query) ||
           c.description.toLowerCase().includes(query) ||
-          c.suitableSoilTypes.some(s => s.toLowerCase().includes(query))
+          c.suitableSoilTypes.some((s: string) => s.toLowerCase().includes(query))
         );
       }
 
