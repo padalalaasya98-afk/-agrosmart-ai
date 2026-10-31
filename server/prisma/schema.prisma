@@ -1,0 +1,111 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String                  @id @default(uuid())
+  name         String
+  email        String                  @unique
+  passwordHash String
+  createdAt    DateTime                @default(now())
+  requests     RecommendationRequest[]
+  saved        SavedRecommendation[]
+
+  @@map("users")
+}
+
+model CropProfile {
+  id                   String                 @id @default(uuid())
+  name                 String                 @unique
+  scientificName       String?
+  category             String
+  description          String
+  imageUrl             String
+  soilTypes            String[]
+  minPh                Float
+  maxPh                Float
+  optimalPhMin         Float
+  optimalPhMax         Float
+  minTemperature       Float
+  maxTemperature       Float
+  optimalTempMin       Float
+  optimalTempMax       Float
+  minRainfall          Float
+  maxRainfall          Float
+  optimalRainfallMin   Float
+  optimalRainfallMax   Float
+  minHumidity          Float
+  maxHumidity          Float
+  optimalHumidityMin   Float
+  optimalHumidityMax   Float
+  seasons              String[]
+  waterRequirement     String
+  npkRequirementJson   String                 @default("{}")
+  growingDurationDays  String                 @default("90-120")
+  majorAdvantages      String[]
+  commonChallenges     String[]
+  sourceReferences     String[]
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  results              RecommendationResult[]
+
+  @@map("crop_profiles")
+}
+
+model RecommendationRequest {
+  id                  String                 @id @default(uuid())
+  userId              String?
+  user                User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  soilType            String?
+  soilPh              Float?
+  nitrogen            Float?
+  phosphorus          Float?
+  potassium           Float?
+  temperature         Float?
+  rainfall            Float?
+  humidity            Float?
+  season              String?
+  state               String?
+  district            String?
+  irrigationAvailable Boolean?
+  waterAvailability   String?
+  inputUnits          String?                @default("standard")
+  createdAt           DateTime               @default(now())
+  results             RecommendationResult[]
+
+  @@map("recommendation_requests")
+}
+
+model RecommendationResult {
+  id               String                @id @default(uuid())
+  requestId        String
+  request          RecommendationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  cropId           String
+  crop             CropProfile           @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  suitabilityScore Float
+  rank             Int
+  factorScoresJson String
+  explanationJson  String
+  warnings         String[]
+  engineVersion    String                @default("1.0.0")
+  createdAt        DateTime              @default(now())
+  saved            SavedRecommendation[]
+
+  @@map("recommendation_results")
+}
+
+model SavedRecommendation {
+  id        String               @id @default(uuid())
+  userId    String?
+  user      User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resultId  String
+  result    RecommendationResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  createdAt DateTime             @default(now())
+
+  @@map("saved_recommendations")
+}
